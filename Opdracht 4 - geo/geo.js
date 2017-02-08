@@ -8,10 +8,10 @@
 *
 *   Copyleft 2012, all wrongs reversed.
 */
-"use strict";
 
 
 (function(){
+    "use strict";
 
     function EventTarget(){
         this._listeners={}
@@ -37,7 +37,7 @@
                         b.splice(d,1);
                         break
                     }
-        }
+        } 
     };
 
        var ET = new EventTarget();
@@ -121,7 +121,7 @@
             var pos2 = new google.maps.LatLng(p2.coords.latitude, p2.coords.longitude);
             return Math.round(google.maps.geometry.spherical.computeDistanceBetween(pos1, pos2), 0);
         }
-    }
+    };
 
 
   
@@ -222,6 +222,6 @@
             setup.debugId = this.debugId;
             setup.customDebugging = true;
         }
-    }    
+    };    
 
 }());
