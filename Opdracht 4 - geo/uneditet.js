@@ -136,7 +136,7 @@ function generate_map(myOptions, canvasId){
             title: locaties[i][0]
         });
     }
-// TODO: Kleur aanpassen op het huidige punt van de tour
+    // TODO: Kleur aanpassen op het huidige punt van de tour
     if(tourType == LINEAIR){
         // Trek lijnen tussen de punten
         debug_message("Route intekenen");
