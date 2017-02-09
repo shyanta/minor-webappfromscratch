@@ -40,7 +40,7 @@
         } 
     };
 
-    var ET = new EventTarget();
+       var ET = new EventTarget();
 
     var setup = {
         name: "SANDBOX",
@@ -73,8 +73,6 @@
 
             (geo_position_js.init())?ET.fire(setup.gpsAvailable):ET.fire(setup.gpsUnavailable);
         },
-        console.log("Start Logs from PositionModule");
-        console.log(init());
         // Start een interval welke op basis van REFRESH_RATE de positie updated
         startInterval: function(event){
             debugMessage("GPS is beschikbaar, vraag positie.");
@@ -82,20 +80,17 @@
             setup.interval = self.setInterval(updatePostition, setup.refreshRate);
             ET.addListener(setup.positionUpdated, checkLocation);
         },
-        console.log(startInterval());
          // Vraag de huidige positie aan geo.js, stel een callback in voor het resultaat
         updatePostition: function (){
             setup.intervalCounter++;
             geo_position_js.getCurrentPosition(setPosition, geoErrorHandler, {enableHighAccuracy:true});
         },
-        console.log(updatePostition());
         // Callback functie voor het instellen van de huidige positie, vuurt een event af
         setPosition: function (position){
             setup.currentPosition = position;
             ET.fire("POSITION_UPDATED");
             debugMessage(setup.intervalCounter+" positie lat:"+position.coords.latitude+" long:"+position.coords.longitude);
         },
-        console.log(setPosition());
         // Controleer de locaties en verwijs naar een andere pagina als we op een locatie zijn
         checkLocation: function (event){
             // Liefst buiten google maps om... maar helaas, ze hebben alle coole functies
@@ -120,14 +115,12 @@
                 }
             }
         },
-        console.log(checkLocation());
         // Bereken het verchil in meters tussen twee punten
         calculateDistance : function (p1, p2){
             var pos1 = new google.maps.LatLng(p1.coords.latitude, p1.coords.longitude);
             var pos2 = new google.maps.LatLng(p2.coords.latitude, p2.coords.longitude);
             return Math.round(google.maps.geometry.spherical.computeDistanceBetween(pos1, pos2), 0);
         }
-        console.log(calculateDistance());
     };
 
 
@@ -208,8 +201,6 @@
             // Zorg dat de kaart geupdated wordt als het POSITION_UPDATED event afgevuurd wordt
             ET.addListener(POSITION_UPDATED, updatePosition);
         },
-        console.log("Start Logs MapModule");
-        console.log(generateMap());
         isNumber : function(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
         },
@@ -220,15 +211,13 @@
             map.setCenter(newPos);
             setup.currentPositionMarker.setPosition(newPos);
         },
-        console.log(updatePosition());
         // FUNCTIES VOOR DEBUGGING
-        geoErrorHandler: function (code, message) {
+        geoErrorHandler: function (code, message) { //You could place this one in the positioModual, because that is the only place that this function gets called. This way you keep everything related to eachother in one modual.
             debugMessage('geo.js error '+code+': '+message);
         },
         debugMessage: function(message){
             (setup.customDebugging && setup.debugId)?document.getElementById(setup.debugId).innerHTML:console.log(message);
         },
-            console.log(debugMessage());
         setCustomDebugging: function (debugId){
             setup.debugId = this.debugId;
             setup.customDebugging = true;
