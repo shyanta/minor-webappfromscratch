@@ -126,8 +126,11 @@
             var pos1 = new google.maps.LatLng(p1.coords.latitude, p1.coords.longitude);
             var pos2 = new google.maps.LatLng(p2.coords.latitude, p2.coords.longitude);
             return Math.round(google.maps.geometry.spherical.computeDistanceBetween(pos1, pos2), 0);
-        }
+        },
         console.log(calculateDistance());
+        geoErrorHandler: function (code, message) {
+            debugMessage('geo.js error '+code+': '+message);
+        }
     };
 
 
@@ -222,13 +225,10 @@
         },
         console.log(updatePosition());
         // FUNCTIES VOOR DEBUGGING
-        geoErrorHandler: function (code, message) {
-            debugMessage('geo.js error '+code+': '+message);
-        },
         debugMessage: function(message){
             (setup.customDebugging && setup.debugId)?document.getElementById(setup.debugId).innerHTML:console.log(message);
         },
-            console.log(debugMessage());
+        console.log(debugMessage());
         setCustomDebugging: function (debugId){
             setup.debugId = this.debugId;
             setup.customDebugging = true;
