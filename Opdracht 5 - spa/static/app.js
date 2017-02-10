@@ -2,7 +2,7 @@
 	var app = {
 		init: function(){
 			routes.init();
-			var sections = document.querySelectorAll('section:not(#navigatie)');
+			var sections = document.querySelectorAll('section:not(#navigatie):not(#home)');
 
 			sections.forEach(function(sections){
 				sections.hidden = true;
