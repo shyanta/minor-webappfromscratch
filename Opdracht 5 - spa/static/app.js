@@ -3,7 +3,6 @@
 		init: function(){
 			routes.init();
 			var sections = document.querySelectorAll('section:not(#navigatie):not(#home)');
-
 			sections.forEach(function(sections){
 				sections.hidden = true;
 			});
@@ -11,26 +10,21 @@
 	};
 	var routes = {
 		init: function(){
-			window.addEventListener('hashchange', function(){
-				var hash = location.hash;
-				sections.toggle(hash);
-			});
+			window.onhashchange = function(){
+				sections.toggle();
+			};
 		}
 	};
 	var sections = {
-		toggle: function(route){
-			var hash = location.hash;
+		toggle: function(){
+			var hash = window.location.hash;
 			var sectionCurrent = document.querySelector('' + hash + '');
 			var sections = document.querySelectorAll('section:not(#navigatie):not('+hash+')');
-			console.log(sections);
-			console.log(sectionCurrent);
-
 			sections.forEach(function(sections){
 				sections.hidden = true;
 				sectionCurrent.hidden = false;
 			});
 		}
 	};
-
 	app.init();
 }());

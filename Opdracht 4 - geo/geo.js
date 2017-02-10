@@ -28,27 +28,27 @@
             if(!a.type)
                 throw Error("Event object missing 'type' property.");
             if(this._listeners[a.type]instanceof Array)
-                for(var c=this._listeners[a.type],b = 0,d = c.length; b<d; b++)c[b].call(this,a)
-        },
-        removeListener: function(a,c){
-            if(this._listeners[a]instanceof Array)
-                for(var b = this._listeners[a],d = 0,e = b.length; d<e; d++)
-                    if (b[d]===c){
-                        b.splice(d,1);
-                        break
-                    }
-        } 
-    };
+                    for(var c=this._listeners[a.type],b = 0,d = c.length; b<d; b++)c[b].call(this,a)
+            },
+            removeListener: function(a,c){
+                if(this._listeners[a]instanceof Array)
+                    for(var b = this._listeners[a],d = 0,e = b.length; d<e; d++)
+                        if (b[d]===c){
+                            b.splice(d,1);
+                            break
+                        }
+            } 
+        };
 
-    var ET = new EventTarget();
+        var ET = new EventTarget();
 
-    var setup = {
-        name: "SANDBOX",
-        type: "LINEAIR",
-        gpsAvailable: 'GPS_AVAILABLE',
-        gpsUnavailable: 'GPS_UNAVAILABLE',
-        positionUpdated: 'POSITION_UPDATED',
-        refreshRate: 1000,
+        var setup = {
+            name: "SANDBOX",
+            type: "LINEAIR",
+            gpsAvailable: 'GPS_AVAILABLE',
+            gpsUnavailable: 'GPS_UNAVAILABLE',
+            positionUpdated: 'POSITION_UPDATED',
+            refreshRate: 1000,
         currentPosition: false,
         currentPositionMarker: false,
         customDebugging: false,
@@ -73,10 +73,10 @@
 
             (geo_position_js.init())?ET.fire(setup.gpsAvailable):ET.fire(setup.gpsUnavailable);
         },
-        console.log("Start Logs from PositionModule");
-        console.log(init());
         // Start een interval welke op basis van REFRESH_RATE de positie updated
         startInterval: function(event){
+            console.log("Start Logs from PositionModule");
+            console.log(positionModule.init());
             debugMessage("GPS is beschikbaar, vraag positie.");
             updatePostition();
             setup.interval = self.setInterval(updatePostition, setup.refreshRate);
