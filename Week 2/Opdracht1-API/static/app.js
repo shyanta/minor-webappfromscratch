@@ -1,6 +1,6 @@
 aja()
 	.method('get')
-	.url('http://www.recipepuppy.com/api/')
+	.url('https://api.spotify.com')
 	.on('200', function(data){
     	console.log(data);
 	})
