@@ -48,36 +48,37 @@
 				.method('get')
 				.url('http://api.giphy.com/v1/gifs/trending?api_key=' + API_KEY)
 				.on('200', function(trending){
-					var trendingData = trending.data;
-			    	var trendingList = document.querySelector('.trending ul');
-			    	console.log(trendingData);
-			    	// var trendingItems = {
-			    	// 	gif_source: trendingData.forEach(
-			    	// 		function(trendingData){
-			    	// 			return trendingData.source;
-			    	// 		}),
-			    	// 	gif_url: trendingData.forEach(
-			    	// 		function(trendingData){
-			    	// 			return trendingData.images.original.url;
-			    	// 		})
-			    	// };
-			    		var trendingItems = [{
-				    		gif_source: trendingData.source,
-				    		// gif_url: trendingData.images.original.url
-				    	}];
-				    	Transparency.render(trendingList, trendingItems);
+					var data = trending.data;
+			    	var trendingList = document.querySelector('#trending ul');
+			    	console.log(data);
+			    
+			    	var trendingItems = {
+			    		gif_source: function(params){
+		    				return data.source;
+		    			},
+			    		gif_url: function(params){
+		    				return data.images.original.url;
+		    			}
+			    	};
+			    	var directives = {
+		    			gif_source: {
+			    			href: function (params){
+		    					return data[0].source;
+		    				}
+		    			},
+		    			gif_url: {
+		    				src: function (params){
+		    					return data[0].images.original.url;
+		    				}
+		    			}
+			    	};
 
-
-			    	//console.log(dataHTML);
-			    	// dataHTML.forEach(function(){
-			    	// 	trendingSection.innerHTML = dataHTML;
-			    	// });
-
-
+			    	Transparency.render(trendingList, trendingItems, directives);
 				})
-			.go();
+				.go();
 		},
-		results: function(){			
+
+		results: function(){
 			var API_KEY = "dc6zaTOxFJmzC";
 			var search = 'dog';
 			aja()
