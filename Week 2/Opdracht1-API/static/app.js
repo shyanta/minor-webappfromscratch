@@ -52,28 +52,20 @@
 			    	var trendingList = document.querySelector('#trending ul');
 			    	console.log(data);
 			    
-			    	var trendingItems = {
-			    		gif_source: function(params){
-		    				return data.source;
-		    			},
-			    		gif_url: function(params){
-		    				return data.images.original.url;
-		    			}
-			    	};
 			    	var directives = {
 		    			gif_source: {
 			    			href: function (params){
-		    					return data[0].source;
+		    					return this.source;
 		    				}
 		    			},
 		    			gif_url: {
 		    				src: function (params){
-		    					return data[0].images.original.url;
+		    					return this.images.original.url;
 		    				}
 		    			}
 			    	};
 
-			    	Transparency.render(trendingList, trendingItems, directives);
+			    	Transparency.render(trendingList, data, directives);
 				})
 				.go();
 		},
