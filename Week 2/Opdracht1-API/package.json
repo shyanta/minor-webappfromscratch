@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "aja": "^0.4.1",
-    "budo": "^9.4.7"
+    "budo": "^9.4.7",
+    "transparency": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {

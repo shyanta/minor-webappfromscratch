@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Search your Gifs</title>
+		<link rel="stylesheet" type="text/css" href="static/style.css">
+	</head>
+	<body>
+		<header>
+			
+		</header>
+		<section id="search">
+			<h1>Home</h1>
+			<p>By searching a type of gif blabla</p>
+			<form action="#results" method="GET">
+				<input type="text" name="gif-search" />
+				<input type="submit" name="search" value="Search" />				
+			</form>
+			<div class="trending">
+				<ul>
+					<li>
+						<a class="gif_source">
+							<img class="gif_url">
+						</a>
+					</li>
+				</ul>
+			</div>
+		</section>
+		<section id="results">
+			<h1>Results</h1>
+			<ul>
+				<li><a href="#info">Gif1</a></li>
+			</ul>
+		</section>
+		<section id="info">
+			<h1>Info</h1>
+		</section>
+		<script src="node_modules/aja/aja.min.js"></script>
+		<script src="static/routie.js"></script>
+		<script src="node_modules/transparency/dist/transparency.min.js"></script>
+		<script src="static/app.js"></script>
+	</body>
+</html>
