@@ -13,13 +13,14 @@
 			window.location.hash = "#search";
 			sections.toggle();
 
-			sections.search();
 			routie({
 			    'search': function() {
 			    	sections.toggle();
+					sections.search();
 			    },
 			    'results': function() {
 			    	sections.toggle();
+			    	sections.results();
 			    },
 			    'info': function(){
 			    	sections.toggle();
@@ -39,10 +40,6 @@
 			});
 		},
 		search: function(){
-			// var submit = document.querySelector('input[type="submit"]');
-			// submit.addEventListener('click', function(){
-			// 	window.location.hash = "#results";
-			// });
 			var API_KEY = "dc6zaTOxFJmzC";
 			aja()
 				.method('get')
@@ -72,14 +69,31 @@
 
 		results: function(){
 			var API_KEY = "dc6zaTOxFJmzC";
-			var search = 'dog';
+			var search = 'cat';
 			aja()
 				.method('get')
 				.url('http://api.giphy.com/v1/gifs/search?q='+ search + '&api_key=' + API_KEY)
-				.on('200', function(data){
-			    	//console.log(data);
+				.on('200', function(search){
+			    	var dataSearch = search.data;
+			    	var searchList = document.querySelector('#search ul');
+			    
+			    	var directivesSearch = {
+		    			gif_source: {
+			    			href: function (params){
+		    					return this.source;
+		    				}
+		    			},
+		    			gif_url: {
+		    				src: function (params){
+		    					return this.images.original.url;
+		    				}
+		    			}
+			    	};
+			    	console.log(dataSearch);
+
+			    	Transparency.render(searchList, dataSearch, directivesSearch);
 				})
-			.go();
+				.go();
 		}
 	};
 	app.init();
