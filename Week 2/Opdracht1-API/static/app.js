@@ -1,9 +1,9 @@
 (function(){
 	"use strict";
 
-	var dataSearch;
-	var dataSearchClean;
-	var currentGifID;
+	var dataSearch,
+	    dataSearchClean,
+	    currentGifID;
 
 	var app = {
 		init: function(){
@@ -20,7 +20,7 @@
 			routie({
 			    'search': function() {
 			    	sections.toggle();
-					sections.search();
+				sections.search();
 			    },
 			    'results': function() {
 			    	sections.toggle();
@@ -35,7 +35,7 @@
 	};
 	var sections = {
 		toggle: function(){
-			var	hash = window.location.hash;
+			var hash = window.location.hash;
 			var current = document.querySelector('' + hash + '');
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
@@ -67,6 +67,7 @@
 			    	var trendingList = document.querySelector('#trending ul');
 			    	console.log(data);
 			    
+				//You can make a sections.render() and then put everything you add with transparency into render to make it more structured
 			    	var directives = {
 		    			gif_source: {
 			    			href: function (params){
@@ -87,7 +88,7 @@
 
 		results: function(){
 			var info = document.querySelector("#info");
-			var API_KEY = "dc6zaTOxFJmzC";
+			var API_KEY = "dc6zaTOxFJmzC";  //In search you also used the same API_KEY, use DRY and make this variable more global
 			var input = document.querySelector('input[name="gif-search"]').value;
 			var searchKey = input.split(' ').join('+');
 			info.hidden = true;
