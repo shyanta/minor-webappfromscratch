@@ -22,7 +22,7 @@
 			    	sections.toggle();
 			    	sections.results();
 			    },
-			    'info': function(){
+			    'info/:name': function(){
 			    	sections.toggle();
 			    }
 			});
@@ -40,6 +40,20 @@
 			});
 		},
 		search: function(){
+			var form = document.querySelector('#submit');
+			var input = document.querySelector('input[name="gif-search"]');
+			form.addEventListener('click', goToResults);
+			input.addEventListener('keypress', checkKeyCode, goToResults);
+
+			function checkKeyCode(key){
+				if (key.keyCode === 13) {
+		            goToResults();
+		        }
+			}
+			function goToResults(){
+				window.location.hash = "#results";
+			}
+			
 			var API_KEY = "dc6zaTOxFJmzC";
 			aja()
 				.method('get')
@@ -69,29 +83,32 @@
 
 		results: function(){
 			var API_KEY = "dc6zaTOxFJmzC";
-			var search = 'cat';
+			var input = document.querySelector('input[name="gif-search"]').value;
+			var searchKey = input.split(' ').join('+');
+			console.log(searchKey);
+
 			aja()
 				.method('get')
-				.url('http://api.giphy.com/v1/gifs/search?q='+ search + '&api_key=' + API_KEY)
+				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + API_KEY + '&limit=50')
 				.on('200', function(search){
-			    	var dataSearch = search.data;
-			    	var searchList = document.querySelector('#search ul');
+					var dataSearch = search.data;
+			    	var searchList = document.querySelector('ul#search');
+			    	console.log(dataSearch);
 			    
-			    	var directivesSearch = {
-		    			gif_source: {
+			    	var directiveSearch = {
+		    			gif_detail: {
 			    			href: function (params){
 		    					return this.source;
 		    				}
 		    			},
-		    			gif_url: {
+		    			gif_link: {
 		    				src: function (params){
 		    					return this.images.original.url;
 		    				}
 		    			}
 			    	};
-			    	console.log(dataSearch);
 
-			    	Transparency.render(searchList, dataSearch, directivesSearch);
+			    	Transparency.render(searchList, dataSearch, directiveSearch);
 				})
 				.go();
 		}

@@ -13,10 +13,8 @@
 		<section id="search">
 			<h1>Home</h1>
 			<p>By searching a type of gif blabla</p>
-			<form action="#results" method="GET">
 				<input type="text" name="gif-search" />
-				<input type="submit" name="search" value="Search" />				
-			</form>
+				<button id="submit">Search</button>	
 			<div id="trending">
 				<ul>
 					<li>
@@ -29,11 +27,11 @@
 		</section>
 		<section id="results">
 			<h1>Results</h1>
-			<div id="search">
-				<ul>
+			<div >
+				<ul id="search">
 					<li>
-						<a class="gif_source" target="blank">
-							<img class="gif_url">
+						<a class="gif_detail">
+							<img class="gif_link">
 						</a>
 					</li>
 				</ul>
