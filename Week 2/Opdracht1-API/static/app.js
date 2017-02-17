@@ -1,6 +1,10 @@
 (function(){
 	"use strict";
 
+	var dataSearch;
+	var dataSearchClean;
+	var currentGifID;
+
 	var app = {
 		init: function(){
 			routes.init();
@@ -22,8 +26,8 @@
 			    	sections.toggle();
 			    	sections.results();
 			    },
-			    'results/:name': function(){
-			    	sections.toggle();
+			    'results/:id': function(){
+			    	sections.detail();
 			    }
 			});
 		}
@@ -82,36 +86,79 @@
 		},
 
 		results: function(){
+			var info = document.querySelector("#info");
 			var API_KEY = "dc6zaTOxFJmzC";
 			var input = document.querySelector('input[name="gif-search"]').value;
 			var searchKey = input.split(' ').join('+');
-			console.log(searchKey);
+			info.hidden = true;
 
 			aja()
 				.method('get')
 				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + API_KEY + '&limit=50')
 				.on('200', function(search){
-					var dataSearch = search.data;
+					dataSearch = search.data;
 			    	var searchList = document.querySelector('ul#search');
-			    	console.log(dataSearch);
+			    	dataSearchClean = dataSearch.map(function(prop){
+			    		return {
+				    		id : prop.id,
+		                    source : prop.images.original.url,
+		                    username : prop.username
+	                   	};
+			    	});
+			    	console.log(dataSearchClean);
 			    
 			    	var directiveSearch = {
 		    			gif_detail: {
-			    			href: function (params){
-		    					return this.source;
+			    			href: function (params){	
+		    					return '#results/' + this.id;	    					
 		    				}
 		    			},
 		    			gif_link: {
 		    				src: function (params){
-		    					return this.images.original.url;
+		    					return this.source;
 		    				}
 		    			}
 			    	};
 
-			    	Transparency.render(searchList, dataSearch, directiveSearch);
+			    	Transparency.render(searchList, dataSearchClean, directiveSearch);
 				})
 				.go();
+		},
+		detail: function(id){
+			var searchList = document.querySelector('ul#search');
+			var info = document.querySelector("#info");
+			searchList.hidden = true;
+			info.hidden = false;
+
+			var href = window.location.href;
+			var hrefArray = href.split('/');
+			var currentGifID = hrefArray[hrefArray.length - 1];
+
+			var current = dataSearchClean.filter(function(dataID){
+				return dataID.id === currentGifID;
+			});
+
+			var directiveSearch = {
+    			gif_current: {
+    				src: function (params){
+    					return this.source;
+    				}
+    			},
+    			user: {
+	    			username: function (params){
+	    				if ((this.username).length <= 1 ){
+							return this.username + "Unknown";
+						}
+						else {
+							return this.username;
+						}
+					}
+				}
+	    	};
+
+	    	Transparency.render(info, current, directiveSearch);
 		}
+			
 	};
 	app.init();
 }());
