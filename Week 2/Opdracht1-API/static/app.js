@@ -1,6 +1,6 @@
 (function(){
 	"use strict";
-
+	// wrap all global variables in a object
 	var dataSearch;
 	var dataSearchClean;
 	var currentGifID;
@@ -35,7 +35,7 @@
 	};
 	var sections = {
 		toggle: function(){
-			var	hash = window.location.hash;
+			var hash = window.location.hash;
 			var current = document.querySelector('' + hash + '');
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
