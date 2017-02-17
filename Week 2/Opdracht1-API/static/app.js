@@ -22,7 +22,7 @@
 			    	sections.toggle();
 			    	sections.results();
 			    },
-			    'info/:name': function(){
+			    'results/:name': function(){
 			    	sections.toggle();
 			    }
 			});
@@ -53,7 +53,7 @@
 			function goToResults(){
 				window.location.hash = "#results";
 			}
-			
+
 			var API_KEY = "dc6zaTOxFJmzC";
 			aja()
 				.method('get')
