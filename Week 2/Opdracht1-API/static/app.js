@@ -1,41 +1,39 @@
 (function(){
 	"use strict";
 
+	var dataTrending;
 	var dataSearch;
-	var dataSearchClean;
 	var currentGifID;
+	var searchKey;
+	var current;
+	// Check wat nodig is en maak er een config van
 
 	var app = {
+		API_KEY : "dc6zaTOxFJmzC",
 		init: function(){
-			routes.init();
+			routes();
 		}
 	};
-	var routes = {
-		init: function(){	
-
-
-			window.location.hash = "#search";
-			sections.toggle();
-
-			routie({
-			    'search': function() {
-			    	sections.toggle();
-					sections.search();
-			    },
-			    'results': function() {
-			    	sections.toggle();
-			    	sections.results();
-			    },
-			    'results/:id': function(){
-			    	sections.detail();
-			    }
-			});
-		}
-
+	var routes = function(){		
+		routie('search');
+		routie({
+		    'search': function() {
+		    	sections.toggle();
+				sections.search();
+		    },
+		    'results': function() {
+		    	sections.toggle();
+		    	sections.results();
+		    },
+		    'results/:id': function(){
+		    	sections.detail();
+		    }
+		});
 	};
+
 	var sections = {
 		toggle: function(){
-			var	hash = window.location.hash;
+			var hash = window.location.hash;
 			var current = document.querySelector('' + hash + '');
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
@@ -58,71 +56,15 @@
 				window.location.hash = "#results";
 			}
 
-			var API_KEY = "dc6zaTOxFJmzC";
-			aja()
-				.method('get')
-				.url('http://api.giphy.com/v1/gifs/trending?api_key=' + API_KEY)
-				.on('200', function(trending){
-					var data = trending.data;
-			    	var trendingList = document.querySelector('#trending ul');
-			    	console.log(data);
-			    
-			    	var directives = {
-		    			gif_source: {
-			    			href: function (params){
-		    					return this.source;
-		    				}
-		    			},
-		    			gif_url: {
-		    				src: function (params){
-		    					return this.images.original.url;
-		    				}
-		    			}
-			    	};
-
-			    	Transparency.render(trendingList, data, directives);
-				})
-				.go();
+			data.getTrending();
 		},
 
 		results: function(){
 			var info = document.querySelector("#info");
-			var API_KEY = "dc6zaTOxFJmzC";
 			var input = document.querySelector('input[name="gif-search"]').value;
-			var searchKey = input.split(' ').join('+');
+			searchKey = input.split(' ').join('+');
 			info.hidden = true;
-
-			aja()
-				.method('get')
-				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + API_KEY + '&limit=50')
-				.on('200', function(search){
-					dataSearch = search.data;
-			    	var searchList = document.querySelector('ul#search');
-			    	dataSearchClean = dataSearch.map(function(prop){
-			    		return {
-				    		id : prop.id,
-		                    source : prop.images.original.url,
-		                    username : prop.username
-	                   	};
-			    	});
-			    	console.log(dataSearchClean);
-			    
-			    	var directiveSearch = {
-		    			gif_detail: {
-			    			href: function (params){	
-		    					return '#results/' + this.id;	    					
-		    				}
-		    			},
-		    			gif_link: {
-		    				src: function (params){
-		    					return this.source;
-		    				}
-		    			}
-			    	};
-
-			    	Transparency.render(searchList, dataSearchClean, directiveSearch);
-				})
-				.go();
+			data.getResults();
 		},
 		detail: function(id){
 			var searchList = document.querySelector('ul#search');
@@ -130,24 +72,95 @@
 			searchList.hidden = true;
 			info.hidden = false;
 
-			var href = window.location.href;
+			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
 			var currentGifID = hrefArray[hrefArray.length - 1];
 
-			var current = dataSearchClean.filter(function(dataID){
+			current = dataSearch.filter(function(dataID){
 				return dataID.id === currentGifID;
 			});
+			render.detail();
+		}
+			
+	};
 
-			var directiveSearch = {
-    			gif_current: {
-    				src: function (params){
+	var data = {
+		getTrending: function(){
+			aja()
+				.method('get')
+				.url('http://api.giphy.com/v1/gifs/trending?api_key=' + app.API_KEY)
+				.on('200', function(trending){
+					dataTrending = trending.data;
+					localStorage.setItem("dataTrending",JSON.stringify(dataTrending));
+			    	render.trending();
+				})
+				.go();
+		},
+		getResults: function(){
+			aja()
+				.method('get')
+				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + app.API_KEY + '&limit=50')
+				.on('200', function(search){
+					dataSearch = search.data.map(function(prop){
+					    return {
+						    id : prop.id,
+				            source : prop.images.original.url,
+		                    username : prop.username
+		               	};
+			    	});
+					localStorage.setItem("dataSearch",JSON.stringify(dataSearch));
+			    	render.results();
+				})
+				.go();
+		}
+	};
+
+	var render = {
+		trending : function(){
+			var trendingList = document.querySelector('#trending ul');			    
+	    	var directives = {
+    			gif_source: {
+	    			href: function (){
     					return this.source;
     				}
     			},
-    			user: {
-	    			username: function (params){
+    			gif_url: {
+    				src: function (){
+    					return this.images.original.url;
+    				}
+    			}
+	    	};
+
+	    	Transparency.render(trendingList, JSON.parse(localStorage.getItem('dataTrending')), directives);
+		},
+		results : function(){
+			var searchList = document.querySelector('ul#search');
+			    
+	    	var directiveSearch = {
+    			gif_detail: {
+	    			href: function (){	
+    					return '#results/' + this.id;	    					
+    				}
+    			},
+    			gif_link: {
+    				src: function (){
+    					return this.source;
+    				}
+    			}
+	    	};
+	    	Transparency.render(searchList, JSON.parse(localStorage.getItem('dataSearch')), directiveSearch);
+		},
+		detail : function(){
+			var directiveSearch = {
+    			gif_current: {
+    				src: function (){
+    					return this.source;
+    				}
+    			},
+    			username: {
+	    			text: function (){
 	    				if ((this.username).length <= 1 ){
-							return this.username + "Unknown";
+							return "Unknown";
 						}
 						else {
 							return this.username;
@@ -158,7 +171,6 @@
 
 	    	Transparency.render(info, current, directiveSearch);
 		}
-			
 	};
 	app.init();
 }());
