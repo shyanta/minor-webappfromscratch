@@ -64,13 +64,16 @@
 			var input = document.querySelector('input[name="gif-search"]').value;
 			searchKey = input.split(' ').join('+');
 			info.hidden = true;
+			info.classList.add('hidden');
 			data.getResults();
 		},
 		detail: function(id){
 			var searchList = document.querySelector('ul#search');
 			var info = document.querySelector("#info");
-			searchList.hidden = true;
+			searchList.hidden = true;			
+			searchList.classList.add('hidden');
 			info.hidden = false;
+			info.classList.remove('hidden');
 
 			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
