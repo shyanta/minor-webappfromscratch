@@ -1,10 +1,7 @@
-(function(){
-	"use strict";
+(function () {
+	"use-strict";
 
-	var dataTrending;
-	var dataSearch;
 	var currentGifID;
-	var searchKey;
 	var current;
 	// Check wat nodig is en maak er een config van
 
@@ -14,6 +11,7 @@
 			routes();
 		}
 	};
+
 	var routes = function(){		
 		routie('search');
 		routie({
@@ -25,20 +23,30 @@
 		    	sections.toggle();
 		    	sections.results();
 		    },
+		    'error': function(){
+		    	sections.toggle();
+		    },
+		    'noresults': function(){
+		    	sections.toggle();
+		    },
 		    'results/:id': function(){
 		    	sections.detail();
 		    }
 		});
 	};
+	// var errorHandler = function(){
+	// 	var body = document.querySelector('body');
+	// 	body.innerHTML = '<h1>OEPS</h1>';
+	// };
 
 	var sections = {
 		toggle: function(){
-			var hash = window.location.hash;
-			var current = document.querySelector('' + hash + '');
+			var hash = location.hash || window.location.hash;
+			var currentHash = document.querySelector(hash);
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
 				sectionArr.hidden = true;
-				current.hidden = false;
+				currentHash.hidden = false;
 			});
 		},
 		search: function(){
@@ -49,8 +57,8 @@
 
 			function checkKeyCode(key){
 				if (key.keyCode === 13) {
-		            goToResults();
-		        }
+					goToResults();
+				}
 			}
 			function goToResults(){
 				window.location.hash = "#results";
@@ -61,11 +69,16 @@
 
 		results: function(){
 			var info = document.querySelector("#info");
+			var searchList = document.querySelector('ul#search');
 			var input = document.querySelector('input[name="gif-search"]').value;
-			searchKey = input.split(' ').join('+');
+			var searchKey = input.replace(' ','+');
+			localStorage.setItem("searchKey",JSON.stringify(searchKey));
 			info.hidden = true;
 			info.classList.add('hidden');
-			data.getResults();
+			searchList.hidden = false;			
+			searchList.classList.remove('hidden');
+			data.getResults(searchKey);
+			console.log(JSON.parse(localStorage.getItem("searchKey")));
 		},
 		detail: function(id){
 			var searchList = document.querySelector('ul#search');
@@ -77,12 +90,19 @@
 
 			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
-			var currentGifID = hrefArray[hrefArray.length - 1];
+				currentGifID = hrefArray[hrefArray.length - 1];
 
-			current = dataSearch.filter(function(dataID){
+			current = JSON.parse(localStorage.getItem('dataSearch')).filter(function(dataID){
 				return dataID.id === currentGifID;
 			});
 			render.detail();
+		},
+		error: function(type){
+			if (type === "api"){
+				window.location.hash = "#error";
+			} else if(type === "search"){
+				window.location.hash = "#noresults";
+			}
 		}
 			
 	};
@@ -91,20 +111,29 @@
 		getTrending: function(){
 			aja()
 				.method('get')
-				.url('http://api.giphy.com/v1/gifs/trending?api_key=' + app.API_KEY)
+				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + app.API_KEY)
 				.on('200', function(trending){
-					dataTrending = trending.data;
+					var dataTrending = trending.data.map(function(prop){
+						return {
+							id : prop.id,
+							source : prop.images.original.url,
+							href : prop.source
+						};
+					});
 					localStorage.setItem("dataTrending",JSON.stringify(dataTrending));
 			    	render.trending();
 				})
+				 .on('40x', function(){
+					sections.error("api");
+				})
 				.go();
 		},
-		getResults: function(){
+		getResults: function(query){
 			aja()
 				.method('get')
-				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + app.API_KEY + '&limit=50')
+				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + app.API_KEY + '&limit=50')
 				.on('200', function(search){
-					dataSearch = search.data.map(function(prop){
+					var dataSearch = search.data.map(function(prop){
 					    return {
 						    id : prop.id,
 				            source : prop.images.original.url,
@@ -112,7 +141,16 @@
 		               	};
 			    	});
 					localStorage.setItem("dataSearch",JSON.stringify(dataSearch));
-			    	render.results();
+
+					if(JSON.parse(localStorage.getItem("dataSearch")).length > 1 ){
+						render.results();
+					}
+					else{
+						sections.error("search");
+					}
+				})
+				 .on('40x', function(){
+					sections.error("api");
 				})
 				.go();
 		}
@@ -124,12 +162,12 @@
 	    	var directives = {
     			gif_source: {
 	    			href: function (){
-    					return this.source;
+    					return this.href;
     				}
     			},
     			gif_url: {
     				src: function (){
-    					return this.images.original.url;
+    					return this.source;
     				}
     			}
 	    	};
@@ -138,7 +176,7 @@
 		},
 		results : function(){
 			var searchList = document.querySelector('ul#search');
-			    
+ 
 	    	var directiveSearch = {
     			gif_detail: {
 	    			href: function (){	
@@ -151,6 +189,7 @@
     				}
     			}
 	    	};
+
 	    	Transparency.render(searchList, JSON.parse(localStorage.getItem('dataSearch')), directiveSearch);
 		},
 		detail : function(){
@@ -176,4 +215,4 @@
 		}
 	};
 	app.init();
-}());
+})();

@@ -12,7 +12,9 @@ ul {
 }
 	ul li {
 		padding: 10px;
-		flex-grow: 1;
+		flex-basis: 30%;
+		width: 30%;
+		height: 100%;
 	}
 		ul li img {
 			width: 100%;
