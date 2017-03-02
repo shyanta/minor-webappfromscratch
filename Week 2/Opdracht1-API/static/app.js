@@ -3,8 +3,6 @@
 
 	var dataTrending;
 	var dataSearch;
-	var currentGifID;
-	var searchKey;
 	var current;
 	// Check wat nodig is en maak er een config van
 
@@ -34,7 +32,10 @@
 	var sections = {
 		toggle: function(){
 			var hash = window.location.hash;
-			var current = document.querySelector('' + hash + '');
+			
+			//Elton says: No need of the ''+. You are adding empty spaces with it.
+			//var current = document.querySelector('' + hash + '');
+			current = document.querySelector(hash);
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
 				sectionArr.hidden = true;
@@ -48,24 +49,39 @@
 			input.addEventListener('keypress', checkKeyCode, goToResults);
 
 			function checkKeyCode(key){
-				if (key.keyCode === 13) {
-		            goToResults();
-		        }
+			    if (key.keyCode === 13) {
+		                 goToResults();
+		       	    }
 			}
+			
 			function goToResults(){
 				window.location.hash = "#results";
 			}
-
-			data.getTrending();
+			
+			// Elton says: I see that you are storing the gotten data in the localstorage
+			// later on, but you are overwritting the data every time with this function.
+			// try checking if it already exist
+			//data.getTrending();
+			if(localStorage.getItem("dataTrending")){
+				render.trending();
+			}else {
+				data.getTrending();
+			}
 		},
 
 		results: function(){
 			var info = document.querySelector("#info");
 			var input = document.querySelector('input[name="gif-search"]').value;
-			searchKey = input.split(' ').join('+');
+			
+			// Elton says: No need for global var you are not using more than once
+			// also there is a function for doing .split(..).join(..)
+			//var searchKey = input.split(' ').join('+');
+			var searchKey = input.replace(' ','+');
 			info.hidden = true;
 			info.classList.add('hidden');
-			data.getResults();
+			
+			// Elton says: Pas the searchKey (or other stuff) as a parameter so you can use it in other functions
+			data.getResults(searchKey);
 		},
 		detail: function(id){
 			var searchList = document.querySelector('ul#search');
@@ -77,6 +93,7 @@
 
 			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
+			// Elton says: don't declare a var more than once
 			var currentGifID = hrefArray[hrefArray.length - 1];
 
 			current = dataSearch.filter(function(dataID){
@@ -99,10 +116,12 @@
 				})
 				.go();
 		},
-		getResults: function(){
+		// Elton says: You have to catch the searchKey you passed on while calling the function
+		getResults: function(query){
 			aja()
 				.method('get')
-				.url('http://api.giphy.com/v1/gifs/search?q='+ searchKey + '&api_key=' + app.API_KEY + '&limit=50')
+				// Elton says: use the parameter instead of the global object
+				.url('http://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + app.API_KEY + '&limit=50')
 				.on('200', function(search){
 					dataSearch = search.data.map(function(prop){
 					    return {
@@ -111,7 +130,7 @@
 		                    username : prop.username
 		               	};
 			    	});
-					localStorage.setItem("dataSearch",JSON.stringify(dataSearch));
+				localStorage.setItem("dataSearch",JSON.stringify(dataSearch));
 			    	render.results();
 				})
 				.go();
@@ -133,7 +152,7 @@
     				}
     			}
 	    	};
-
+		
 	    	Transparency.render(trendingList, JSON.parse(localStorage.getItem('dataTrending')), directives);
 		},
 		results : function(){
