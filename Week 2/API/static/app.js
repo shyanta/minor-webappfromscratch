@@ -50,8 +50,8 @@
 			});
 		},
 		toggleResults: function(type){
-			var searchList = document.querySelector('#search-results');
-			var info = document.querySelector("#info");
+			var searchList = document.getElementById('search-results');
+			var info = document.getElementById("info");
 			if (type === "results"){				
 				searchList.hidden = false;			
 				searchList.classList.remove('hidden');
@@ -65,7 +65,7 @@
 			}
 		},
 		search: function(){
-			var form = document.querySelector('#submit');
+			var form = document.getElementById('submit');
 			var input = document.querySelector('input[name="gif-search"]');
 			form.addEventListener('click', goToResults);
 			input.addEventListener('keypress', checkKeyCode, goToResults);
@@ -179,7 +179,7 @@
 	    	Transparency.render(trendingList, data, directives);
 		},
 		results : function(data){
-			var searchList = document.querySelector('ul#search');
+			var searchList = document.getElementById('#search');
  
 	    	var directiveSearch = {
     			gif_detail: {
