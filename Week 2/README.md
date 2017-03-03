@@ -2,4 +2,4 @@
 
 My Visualized Flow:
 
-[Visualized Flow](https://shyanta.github.io/minor-webappfromscratch/Week%202/API/img/AppFlow.png)
+![Visualized Flow](https://shyanta.github.io/minor-webappfromscratch/Week%202/API/img/AppFlow.png)
