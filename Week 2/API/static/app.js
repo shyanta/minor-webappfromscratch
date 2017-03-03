@@ -75,11 +75,11 @@
 			var form = document.getElementById('submit');
 			var input = document.querySelector('input[name="gif-search"]');
 			//When #search is loaded, empty the input field
-			document.querySelector('input[name="gif-search"]').value = '';
+			input.value = '';
 			form.addEventListener('click', goToResults);
 			input.addEventListener('keypress', checkKeyCode, goToResults);
 
-			//Add a keypress event on keycode 13(The enter key) so the searchfield functions like a normal form
+			//Add a keypress event on keycode 13(The return key) so the searchfield functions like a normal form
 			function checkKeyCode(key){
 				if (key.keyCode === 13) {
 					goToResults();
@@ -162,7 +162,13 @@
 
 			    	sections.loader.classList.add('hidden');
 				})
-				.on('error', function(){
+				.on('40x', function(){
+					//When the api gives an error go to the error section
+					//Give the parameter API so the error section knows what errorsection to handle
+			    	sections.loader.classList.add('hidden');
+					sections.error("api");
+				})
+				.on('500', function(){
 					//When the api gives an error go to the error section
 					//Give the parameter API so the error section knows what errorsection to handle
 			    	sections.loader.classList.add('hidden');
@@ -197,7 +203,13 @@
 					}
 			    	sections.loader.classList.add('hidden');
 				})
-				.on('error', function(){
+				.on('40x', function(){
+					//When the api gives an error go to the error section
+					//Give the parameter API so the error section knows what errorsection to handle
+			    	sections.loader.classList.add('hidden');
+					sections.error("api");
+				})
+				.on('500', function(){
 					//When the api gives an error go to the error section
 					//Give the parameter API so the error section knows what errorsection to handle
 			    	sections.loader.classList.add('hidden');
