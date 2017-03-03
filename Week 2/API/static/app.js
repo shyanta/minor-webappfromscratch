@@ -1,6 +1,10 @@
 (function () {
 	"use-strict";
 
+	/*
+	    NOTE
+	    Define what these variables eventually will contain
+    	*/
 	var currentGifID;
 	var current;
 	// Check wat nodig is en maak er een config van
@@ -44,6 +48,11 @@
 			var currentHash = document.querySelector(hash);
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
 			sectionArr.forEach(function(sectionArr){
+
+				/*
+				    NOTE
+				    Be consistent: Use hidden or classList
+				*/
 				sectionArr.hidden = true;
 				currentHash.hidden = false;
 			});
@@ -74,11 +83,16 @@
 			var form = document.getElementById('submit');
 			var input = document.querySelector('input[name="gif-search"]');
 			//When #search is loaded, empty the input field
+			
+			/*
+			    NOTE
+			    input.value = '';
+			*/
 			document.querySelector('input[name="gif-search"]').value = '';
 			form.addEventListener('click', goToResults);
 			input.addEventListener('keypress', checkKeyCode, goToResults);
 
-			//Add a keypress event on keycode 13(The enter key) so the searchfield functions like a normal form
+			//Add a keypress event on keycode 13(The return key) so the searchfield functions like a normal form
 			function checkKeyCode(key){
 				if (key.keyCode === 13) {
 					goToResults();
@@ -93,7 +107,6 @@
 			//Fill the page with the Trending Data, for this data, go to the following function
 			data.getTrending();
 		},
-
 		results: function(){
 			//Get value from the input field
 			var input = document.querySelector('input[name="gif-search"]').value;
@@ -132,8 +145,7 @@
 				//Go to #noresults with routie to render the section with the search error
 				window.location.hash = "#noresults";
 			}
-		}
-			
+		}	
 	};
 
 	var data = {
