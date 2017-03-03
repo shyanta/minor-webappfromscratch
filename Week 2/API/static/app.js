@@ -34,10 +34,6 @@
 		    }
 		});
 	};
-	// var errorHandler = function(){
-	// 	var body = document.querySelector('body');
-	// 	body.innerHTML = '<h1>OEPS</h1>';
-	// };
 
 	var sections = {
 		toggle: function(){
