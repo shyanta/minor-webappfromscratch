@@ -49,6 +49,21 @@
 				currentHash.hidden = false;
 			});
 		},
+		toggleResults: function(type){
+			var searchList = document.querySelector('#search-results');
+			var info = document.querySelector("#info");
+			if (type === "results"){				
+				searchList.hidden = false;			
+				searchList.classList.remove('hidden');
+				info.hidden = true;
+				info.classList.add('hidden');
+			} else if (type === "detail"){
+				searchList.hidden = true;			
+				searchList.classList.add('hidden');
+				info.hidden = false;
+				info.classList.remove('hidden');
+			}
+		},
 		search: function(){
 			var form = document.querySelector('#submit');
 			var input = document.querySelector('input[name="gif-search"]');
@@ -68,26 +83,15 @@
 		},
 
 		results: function(){
-			var info = document.querySelector("#info");
-			var searchList = document.querySelector('ul#search');
 			var input = document.querySelector('input[name="gif-search"]').value;
 			var searchKey = input.replace(' ','+');
 			localStorage.setItem("searchKey",JSON.stringify(searchKey));
-			info.hidden = true;
-			info.classList.add('hidden');
-			searchList.hidden = false;			
-			searchList.classList.remove('hidden');
+			sections.toggleResults('results');
 			data.getResults(searchKey);
 			console.log(JSON.parse(localStorage.getItem("searchKey")));
 		},
 		detail: function(id){
-			var searchList = document.querySelector('ul#search');
-			var info = document.querySelector("#info");
-			searchList.hidden = true;			
-			searchList.classList.add('hidden');
-			info.hidden = false;
-			info.classList.remove('hidden');
-
+			sections.toggleResults('detail');
 			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
 				currentGifID = hrefArray[hrefArray.length - 1];
@@ -123,7 +127,7 @@
 					localStorage.setItem("dataTrending",JSON.stringify(dataTrending));
 			    	render.trending();
 				})
-				 .on('40x', function(){
+				.on('40x', function(){
 					sections.error("api");
 				})
 				.go();
@@ -149,7 +153,7 @@
 						sections.error("search");
 					}
 				})
-				 .on('40x', function(){
+				.on('40x', function(){
 					sections.error("api");
 				})
 				.go();
@@ -162,7 +166,7 @@
 	    	var directives = {
     			gif_source: {
 	    			href: function (){
-    					return this.href;
+    					return this.source;
     				}
     			},
     			gif_url: {
