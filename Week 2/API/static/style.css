@@ -5,6 +5,10 @@ body {
 	font-size: 1.2em;
 }
 
+a {
+	color:white;
+}
+
 section h1 {
 	text-transform: uppercase;
 	text-align: center;
