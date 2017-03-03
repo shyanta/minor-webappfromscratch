@@ -6,7 +6,6 @@
 	// Check wat nodig is en maak er een config van
 
 	var app = {
-		API_KEY : "dc6zaTOxFJmzC",
 		init: function(){
 			routes();
 		}
@@ -112,10 +111,11 @@
 	};
 
 	var data = {
+		var API_KEY = "dc6zaTOxFJmzC";
 		getTrending: function(){
 			aja()
 				.method('get')
-				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + app.API_KEY)
+				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + API_KEY)
 				.on('200', function(trending){
 					var dataTrending = trending.data.map(function(prop){
 						return {
@@ -135,7 +135,7 @@
 		getResults: function(query){
 			aja()
 				.method('get')
-				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + app.API_KEY + '&limit=50')
+				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + API_KEY+ '&limit=50')
 				.on('200', function(search){
 					var dataSearch = search.data.map(function(prop){
 					    return {
