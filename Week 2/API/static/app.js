@@ -69,6 +69,7 @@
 				info.classList.remove('hidden');
 			}
 		},
+		loader : document.querySelector('.loader'),
 		search: function(){
 			//Add eventlisteners to the inputfield and the submit button, to redirect to the #results page
 			var form = document.getElementById('submit');
@@ -93,7 +94,6 @@
 			//Fill the page with the Trending Data, for this data, go to the following function
 			data.getTrending();
 		},
-
 		results: function(){
 			//Get value from the input field
 			var input = document.querySelector('input[name="gif-search"]').value;
@@ -141,6 +141,7 @@
 		API_KEY : "dc6zaTOxFJmzC",
 		//Do an API call on the trending data
 		getTrending: function(){
+			sections.loader.classList.remove('hidden');
 			aja()
 				.method('get')
 				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + data.API_KEY)
@@ -158,23 +159,22 @@
 					//Go to the render function, so the data will be pushed to the HTML
 					//Give the data in a parameter, so the next function has the parsed data
 			    	render.trending(JSON.parse(localStorage.getItem('dataTrending')));
+
+			    	sections.loader.classList.add('hidden');
 				})
-				.on('40x', function(){
+				.on('error', function(){
 					//When the api gives an error go to the error section
 					//Give the parameter API so the error section knows what errorsection to handle
-					sections.error("api");
-				})
-				.on('500', function(){
-					//When the api gives an error go to the error section
-					//Give the parameter API so the error section knows what errorsection to handle
+			    	sections.loader.classList.add('hidden');
 					sections.error("api");
 				})
 				.go();
 		},
 		getResults: function(query){
+			sections.loader.classList.remove('hidden');
 			aja()
 				.method('get')
-				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + data.API_KEY + '&limit=50')
+				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + data.API_KEY + '&limit=30')
 				.on('200', function(search){
 					//clean the received data and only return the needed properties
 					var dataSearch = search.data.map(function(prop){
@@ -195,15 +195,12 @@
 						//If the given data contains less then 1 object, redirect to the searchError section
 						sections.error("search");
 					}
+			    	sections.loader.classList.add('hidden');
 				})
-				.on('40x', function(){
+				.on('error', function(){
 					//When the api gives an error go to the error section
 					//Give the parameter API so the error section knows what errorsection to handle
-					sections.error("api");
-				})
-				.on('500', function(){
-					//When the api gives an error go to the error section
-					//Give the parameter API so the error section knows what errorsection to handle
+			    	sections.loader.classList.add('hidden');
 					sections.error("api");
 				})
 				.go();
