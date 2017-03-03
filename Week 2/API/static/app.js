@@ -88,10 +88,10 @@
 			localStorage.setItem("searchKey",JSON.stringify(searchKey));
 			sections.toggleResults('results');
 			data.getResults(searchKey);
-			console.log(JSON.parse(localStorage.getItem("searchKey")));
 		},
 		detail: function(id){
 			sections.toggleResults('detail');
+			
 			var href = window.location.href; //Kan ook anders
 			var hrefArray = href.split('/');
 				currentGifID = hrefArray[hrefArray.length - 1];
@@ -125,7 +125,7 @@
 						};
 					});
 					localStorage.setItem("dataTrending",JSON.stringify(dataTrending));
-			    	render.trending();
+			    	render.trending(JSON.parse(localStorage.getItem('dataTrending')));
 				})
 				.on('40x', function(){
 					sections.error("api");
@@ -147,7 +147,7 @@
 					localStorage.setItem("dataSearch",JSON.stringify(dataSearch));
 
 					if(JSON.parse(localStorage.getItem("dataSearch")).length > 1 ){
-						render.results();
+						render.results(JSON.parse(localStorage.getItem('dataSearch')));
 					}
 					else{
 						sections.error("search");
@@ -161,7 +161,7 @@
 	};
 
 	var render = {
-		trending : function(){
+		trending : function(data){
 			var trendingList = document.querySelector('#trending ul');			    
 	    	var directives = {
     			gif_source: {
@@ -176,9 +176,9 @@
     			}
 	    	};
 
-	    	Transparency.render(trendingList, JSON.parse(localStorage.getItem('dataTrending')), directives);
+	    	Transparency.render(trendingList, data, directives);
 		},
-		results : function(){
+		results : function(data){
 			var searchList = document.querySelector('ul#search');
  
 	    	var directiveSearch = {
@@ -194,7 +194,7 @@
     			}
 	    	};
 
-	    	Transparency.render(searchList, JSON.parse(localStorage.getItem('dataSearch')), directiveSearch);
+	    	Transparency.render(searchList, data, directiveSearch);
 		},
 		detail : function(){
 			var directiveSearch = {
