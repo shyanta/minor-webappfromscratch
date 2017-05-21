@@ -27,7 +27,7 @@ section#search #search-input{
 section#search input {
 	line-height: 2;
 }
-section#search #submit {
+section#search input[type="submit"] {
 	border: 0;
 	background-color: hotpink;
 	color: white;
@@ -39,11 +39,14 @@ section#results #info {
 	flex-direction: column;
 	justify-content: center;
 }
-section#results #info img {
-	width: 50%;
-	margin: 0 auto;
+section#results #info #detailed-gif {
+	text-align: center;
 }
-section#results #info p {
+section#results #info #detailed-gif img {
+	width: 50%;
+	margin: 20px auto;
+}
+section#results #info #detailed-gif p {
 	text-align: center
 }
 
@@ -81,11 +84,11 @@ ul {
 ul#search.hidden {
 	display: none;
 }
-#info.hidden {
+section#results #info.hidden {
 	display: none;
 }
 
-/* 	Source Loader Codes 
+/* 	Source Loader Codes
 	http://tobiasahlin.com/spinkit/*/
 .loader {
 	position: fixed;

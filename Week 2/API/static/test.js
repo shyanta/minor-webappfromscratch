@@ -1,116 +1,126 @@
 (function () {
 	"use-strict";
 
-	var searchItems;
-	var currentGifId;
+	var currentGifID;
+	var current;
 	// Check wat nodig is en maak er een config van
 
 	var app = {
 		init: function(){
-			routes.routie();
+			routes();
 		}
 	};
 
-	var routes = {
-		routie : function(){
-			//When refreshed always go to the #search
-			routie('search');
-			//Route defines what methods should be used at every hash
-			routie({
-			    'search': function() {
-			    	toggle.pages();
-					sections.search();
-			    },
-			    'results': function() {
-			    	toggle.pages();
-			    },
-			    'error': function(){
-			    	toggle.pages();
-			    },
-			    'noresults': function(){
-			    	toggle.pages();
-			    },
-			    'results/:id': function(){
-			    	sections.detail();
-			    }
-			});
-		}
+	var routes = function(){
+		//When refreshed always go to the #search
+		routie('search');
+		//Route defines what methods should be used at every hash
+		routie({
+		    'search': function() {
+		    	sections.toggle();
+				sections.search();
+		    },
+		    'results': function() {
+		    	sections.toggle();
+		    	sections.results();
+		    },
+		    'error': function(){
+		    	sections.toggle();
+		    },
+		    'noresults': function(){
+		    	sections.toggle();
+		    },
+		    'results/:id': function(){
+		    	sections.detail();
+		    }
+		});
 	};
 
-	var toggle = {
-		pages: function(){
+	var sections = {
+		toggle: function(){
 			//Make sure only the section with the current hash from the href is active
 			//Hide the sections that don't have the same ID as the hash
 			var hash = location.hash || window.location.hash;
 			var currentHash = document.querySelector(hash);
 			var sectionArr = document.querySelectorAll('section:not('+hash+')');
-			sectionArr = Array.prototype.slice.call(sectionArr);
-			sectionArr.forEach(function(section){
-				section.hidden = true;
+			sectionArr.forEach(function(sectionArr){
+				sectionArr.hidden = true;
 				currentHash.hidden = false;
 			});
 		},
-		toResults: function(){
-			//When switching from detailpage to results, toggle those parts
-			//The hidden attribute is added because screenreaders will understand this, and will skip this part.
-			//Display:flex messes up the hidden attribute functionality, so I also added a class with display:none
-			var searchList = document.getElementById('search-results');
-			var info = document.getElementById("info");
-				searchList.hidden = false;
-				searchList.removeAttribute('class','hidden');
-				info.hidden = true;
-				info.setAttribute('class','hidden');
-		},
-		toDetail: function(){
+		toggleResults: function(type){
 			//When switching from results to detailpage, toggle those parts
+			//When the function is called a parameter is given
+			//this parameter calls what part should be shown
+			//With this parameter this functions knows what part of the code should be executed
 			//The hidden attribute is added because screenreaders will understand this, and will skip this part.
 			//Display:flex messes up the hidden attribute functionality, so I also added a class with display:none
 			var searchList = document.getElementById('search-results');
 			var info = document.getElementById("info");
+			if (type === "results"){
+				searchList.hidden = false;
+				searchList.classList.remove('hidden');
+				info.hidden = true;
+				info.classList.add('hidden');
+			} else if (type === "detail"){
 				searchList.hidden = true;
-				searchList.setAttribute('class','hidden');
+				searchList.classList.add('hidden');
 				info.hidden = false;
-				info.removeAttribute('class','hidden');
-		}
-	}
-
-	var sections = {
+				info.classList.remove('hidden');
+			}
+		},
 		loader : document.querySelector('.loader'),
 		search: function(){
 			//Add eventlisteners to the inputfield and the submit button, to redirect to the #results page
-			var form = document.getElementById('search-input');
-			form.addEventListener('submit', function(){
-				event.preventDefault();
-				sections.results();
-			});
+			var form = document.getElementById('submit');
+			var input = document.querySelector('input[name="gif-search"]');
+			//When #search is loaded, empty the input field
+			input.value = '';
+			form.addEventListener('click', goToResults);
+			input.addEventListener('keypress', checkKeyCode, goToResults);
+
+			//Add a keypress event on keycode 13(The return key) so the searchfield functions like a normal form
+			function checkKeyCode(key){
+				if (key.keyCode === 13) {
+					goToResults();
+				}
+			}
+			//Change the hash to #results to go to the results page
+			//The change of the hash will call routie
+			function goToResults(){
+				window.location.hash = "#results";
+			}
+
 			//Fill the page with the Trending Data, for this data, go to the following function
-			getData.trending();
+			data.getTrending();
 		},
 		results: function(){
 			//Get value from the input field
 			var input = document.querySelector('input[name="gif-search"]').value;
 			//Replace every space with a plus, so the query from the api key works
 			var searchKey = input.replace(' ','+');
-
+			//localStorage.setItem("searchKey",JSON.stringify(searchKey));
 			//Go to the toggleResults and make the results part active. Do this with the given parameter
-			toggle.toResults();
-
+			sections.toggleResults('results');
 			//Get the data from the searched key. Give the searchKey as an parameter, so the searchkey
 			//only has to be declared once
-			getData.results(searchKey);
+			data.getResults(searchKey);
 		},
-		detail: function(){
+		detail: function(id){
 			//Got to the toggleResults and make the detail part active. Do this with the given parameter
-			toggle.toDetail();
-			console.log(currentGifId);
-			//Filter data on the ID, this only returns the gif that is clicked, which gives a detail page
-			var current = JSON.parse(localStorage.getItem('dataSearch')).filter(function(data){
-				return data.id === currentGifId;
-			});
-			console.log(current);
+			sections.toggleResults('detail');
 
+			//Save the ID from the clicked gif in a variable, so this can be used to filter
+			var href = window.location.href; //Kan ook anders
+			var hrefArray = href.split('/');
+				currentGifID = hrefArray[hrefArray.length - 1];
+
+			//Filter data on the ID, this only returns the gif that is clicked, which gives a detail page
+			current = JSON.parse(localStorage.getItem('dataSearch')).filter(function(dataID){
+				return dataID.id === currentGifID;
+			});
 			//Go to the render page to push the data to the HTML
-			render.detail(current);
+			render.detail();
 		},
 		error: function(type){
 			//If the error is created on the apicall, give the following error
@@ -126,15 +136,15 @@
 
 	};
 
-	var getData = {
+	var data = {
 		//Add API key to use in the methods below
 		API_KEY : "dc6zaTOxFJmzC",
 		//Do an API call on the trending data
-		trending: function(){
+		getTrending: function(){
 			sections.loader.classList.remove('hidden');
 			aja()
 				.method('get')
-				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + getData.API_KEY)
+				.url('https://api.giphy.com/v1/gifs/trending?api_key=' + data.API_KEY)
 				.on('200', function(trending){
 					//clean the received data and only return the needed properties
 					var dataTrending = trending.data.map(function(prop){
@@ -149,6 +159,7 @@
 					//Go to the render function, so the data will be pushed to the HTML
 					//Give the data in a parameter, so the next function has the parsed data
 			    	render.trending(JSON.parse(localStorage.getItem('dataTrending')));
+
 			    	sections.loader.classList.add('hidden');
 				})
 				.on('40x', function(){
@@ -165,11 +176,11 @@
 				})
 				.go();
 		},
-		results: function(query){
+		getResults: function(query){
 			sections.loader.classList.remove('hidden');
 			aja()
 				.method('get')
-				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + getData.API_KEY + '&limit=30')
+				.url('https://api.giphy.com/v1/gifs/search?q='+ query + '&api_key=' + data.API_KEY + '&limit=30')
 				.on('200', function(search){
 					//clean the received data and only return the needed properties
 					var dataSearch = search.data.map(function(prop){
@@ -185,21 +196,12 @@
 					//If the given data contains more than 1 object, push the data to the HTML
 					if(JSON.parse(localStorage.getItem("dataSearch")).length >= 1 ){
 						render.results(JSON.parse(localStorage.getItem('dataSearch')));
-						window.location.hash = '#results';
-						searchItems = document.querySelectorAll('.search-item');
-						console.log(searchItems);
-						searchItems.forEach(function(searchData){
-							searchData.addEventListener('click', function(){
-								currentGifId = this.id;
-								console.log(this.id);
-							})
-						})
 					}
 					else{
 						//If the given data contains less then 1 object, redirect to the searchError section
 						sections.error("search");
-						sections.loader.classList.add('hidden');
 					}
+			    	sections.loader.classList.add('hidden');
 				})
 				.on('40x', function(){
 					//When the api gives an error go to the error section
@@ -243,11 +245,6 @@
 			var searchList = document.querySelector('ul#results');
 
 	    	var directiveSearch = {
-				gif_id : {
-					id: function(){
-						return this.id;
-					}
-				},
     			gif_detail: {
 	    			href: function (){
 	    				//Add the ID property at the <a href="#results/"> from the HTML template
@@ -263,27 +260,21 @@
 	    	};
 	    	//Use transparency to render the data to the HTML template
 	    	Transparency.render(searchList, data, directiveSearch);
-			sections.loader.classList.add('hidden');
 		},
-		detail : function(current){
-			var backToResults = document.querySelector('a[href="#results"]');
-			backToResults.addEventListener('click', function(){
-				toggle.toResults();
-			});
-			var detailedGif = document.getElementById('detailed-gif');
+		detail : function(){
 			//Get the section which contains the right HTML template
 			var directiveSearch = {
-				gif_current: {
-					src: function (){
-						//Place the source propertie at the <img src=""> from the HTML template
-						return this.source;
-					}
-				},
-				username: {
-					text: function (){
-						if ((this.username) === "" ){
-							//If the username property is empty, place Unknown in the <span> from the HTML template
-							//so users know that there isn't a username
+    			gif_current: {
+    				src: function (){
+	    				//Place the source propertie at the <img src=""> from the HTML template
+    					return this.source;
+    				}
+    			},
+    			username: {
+	    			text: function (){
+	    				if ((this.username) === "" ){
+	    					//If the username property is empty, place Unknown in the <span> from the HTML template
+	    					//so users know that there isn't a username
 							return "Unknown";
 						}
 						else {
@@ -292,11 +283,9 @@
 						}
 					}
 				}
-			};
-			//Use transparency to render the data to the HTML template
-			Transparency.render(detailedGif, current, directiveSearch);
-
-			console.log('rendered');
+	    	};
+	    	//Use transparency to render the data to the HTML template
+	    	Transparency.render(info, current, directiveSearch);
 		}
 	};
 	app.init();

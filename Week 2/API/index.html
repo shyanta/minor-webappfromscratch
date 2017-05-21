@@ -27,10 +27,10 @@
 		<section id="search">
 			<h1>Home</h1>
 			<p>Search a gif you'd like to see</p>
-			<div id="search-input">
+			<form id="search-input">
 					<input type="text" name="gif-search" />
-					<button id="submit">Search</button>	
-			</div>
+					<input type="submit" value="Search" />
+			</form>
 			<div id="trending">
 				<ul>
 					<li>
@@ -46,7 +46,7 @@
 				<h1>Results</h1>
 				<a href="#search">Go back to Search Page</a>
 				<ul id="results">
-					<li>
+					<li class="search-item" id="gif_id">
 						<a class="gif_detail">
 							<img class="gif_link">
 						</a>
@@ -56,10 +56,12 @@
 			<div id="info">
 				<h1>Info</h1>
 				<a href="#results">Go back to Results Overview</a>
-				<img class="gif_current"/>
-				<p>Posted By: 
-					<span class="username"></span>
-				</p>
+				<div id="detailed-gif">
+					<img class="gif_current"/>
+					<p>Posted By:
+						<span class="username"></span>
+					</p>
+				</div>
 			</div>
 		</section>
 		<section id="error">
