@@ -30,8 +30,8 @@
 			    'noresults': function(){
 			    	toggle.pages();
 			    },
-			    'results/:id': function(){
-			    	sections.detail();
+			    'results/:id': function(id){
+			    	sections.detail(id);
 			    }
 			});
 		}
@@ -77,11 +77,12 @@
 	var sections = {
 		loader : document.querySelector('.loader'),
 		search: function(){
+			var self = this;
 			//Add eventlisteners to the inputfield and the submit button, to redirect to the #results page
 			var form = document.getElementById('search-input');
 			form.addEventListener('submit', function(){
 				event.preventDefault();
-				sections.results();
+				self.results();
 			});
 			//Fill the page with the Trending Data, for this data, go to the following function
 			getData.trending();
@@ -108,7 +109,6 @@
 				return data.id === currentGifId;
 			});
 			console.log(current);
-
 			//Go to the render page to push the data to the HTML
 			render.detail(current);
 		},
